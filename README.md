@@ -135,7 +135,7 @@ add new file xs-app.json under app folder
 add services in __mta.yaml__ file
 
 ```yaml
-- name: cfdemoS0020227452-approuter
+- name: cfdemo-approuter
     type: approuter.nodejs
     path: app
     build-parameters:
@@ -172,4 +172,61 @@ npm run build
 npm run deploy
 ```
 
+### XSUAA 
+ __xs-app.json__
+ ```json
+ "authenticationMethod": "route"
+ ```
+
+create resources in __mta.ymal__ file
+```yaml
+resources:
+  - name: cfdemo-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: xsuaa
+    service-plan: application
+    config:
+      xsappname: cfdemo-${org}-${space}
+      tenant-mode: dedicated
+```
+bind the __xsuaa__ service under __cfdemo-service__
+
+```yaml
+requires:
+    - name: cfdemo-xsuaa
+```
+after
+```yaml
+ID: cfdemo
+_schema-version: '3.1'
+version: 0.0.1
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  - name: cfdemo-service
+    type: nodejs
+    path: srv
+    build-parameters:
+      ignore:    
+        - 'default-*.json'
+        - .env
+        - '*node_modules*'
+        - package-lock.json
+    requires:
+    - name: cfdemo-xsuaa
+```
+add requires in cfdemo-service
+```yaml
+    forwardAuthToken: true 
+- name: cfdemo-xsuaa
+```
+add resources
+```yaml
+ oauth2-configuration:
+        redirect-uris:
+        - "https://*.hana.ondemand.com/**"
+```
+deploy again
 
