@@ -8,3 +8,34 @@ modules:
   - name: cfdemoS0020227452-service
     type: nodejs
     path: srv
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    build-parameters:
+      ignore:    
+        - 'default-*.json'
+        - .env
+        - '*node_modules*'
+        - package-lock.json
+  
+  - name: cfdemoS0020227452-approuter
+    type: approuter.nodejs
+    path: app
+    build-parameters:
+      ignore:    
+        - 'default-*.json'
+        - .env
+        - '*node_modules*'
+        - package-lock.json
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      keep-existing-routes: true
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          url:  ~{srv-url}
+          timeout: 55000

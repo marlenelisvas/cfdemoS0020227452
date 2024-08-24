@@ -97,3 +97,79 @@ execute command deploy
 ```sh
 npm run deploy
 ```
+### Approuter 
+create __app__ folder under __cfdemo__ and initialize
+
+```sh
+mkdir app
+cd app
+npm init --y
+```
+Edit package.json and add the script start
+```json
+ "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  }
+```
+
+install @sap/approuter
+```sh
+npm install @sap/approuter
+```
+
+add new file xs-app.json under app folder
+
+```json
+{
+    "authenticationMethod": "none",
+    "routes": [
+        {
+            "source": "^/(.*)$",
+            "target":"$1",
+            "destination": "srv-api"
+        }
+    ]
+}
+```
+
+add services in __mta.yaml__ file
+
+```yaml
+- name: cfdemoS0020227452-approuter
+    type: approuter.nodejs
+    path: app
+    build-parameters:
+      ignore:    
+        - 'default-*.json'
+        - .env
+        - '*node_modules*'
+        - package-lock.json
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      keep-existing-routes: true
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          url:  ~{srv-url}
+          timeout: 55000
+```
+add __srv-api__ in the __cfdemo- service__
+
+```yaml
+provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+```
+Deploy the application with the added changes
+
+```sh
+npm run clean
+npm run build
+npm run deploy
+```
+
+
