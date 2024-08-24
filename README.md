@@ -230,3 +230,39 @@ add resources
 ```
 deploy again
 
+### Authentication
+add libraries in __srv__ folder __@sap/xsenv__, __@sap/xssec__, __passport__ 
+```json
+"dependencies": {
+    "express": "^4.19.2",
+    "@sap/xsenv": "^3.1.1",
+    "@sap/xssec": "^3.2.7",
+    "passport": "^0.5.0"
+  }
+```
+declare libraries in __server.js__
+
+```js
+const express = require("express");
+const passport = require("passport");
+const xsenv = require("e@sap/xsenv");
+const JWTStrategy = require("@sap/xssec").JWTStrategy;
+const services = xsenv.getServices({uaa: "cfdemo-xsuaa"});//xsuaa service
+const app = express();
+
+
+passport.use(new JWTStrategy(services.uaa));
+app.use(passport.initialize());
+app.use(passport.authenticate("JWT",{session:false}));
+
+/*app.get("/", function(req, res, next){
+    res.send("Welcome to Basic NodeJs");
+});*/
+
+
+app.get("/", function(req, res, next){
+    res.send("Welcome to Basic NodeJs");
+});
+const port = process.env.PORT || 6000;
+app.listen(port, function(){console.log("Basic NodeJS listening on port " + req.user.id);});
+```
