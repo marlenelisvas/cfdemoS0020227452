@@ -261,8 +261,9 @@ app.use(passport.authenticate("JWT",{session:false}));
 
 
 app.get("/", function(req, res, next){
-    res.send("Welcome to Basic NodeJs");
+    res.send("Welcome to Basic NodeJs "+ req.user.id);
 });
-const port = process.env.PORT || 6000;
-app.listen(port, function(){console.log("Basic NodeJS listening on port " + req.user.id);});
+
+const port = process.env.PORT || 5000;
+app.listen(port, function(){console.log("Basic NodeJS listening on port " + port);});
 ```
