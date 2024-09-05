@@ -8,6 +8,7 @@ modules:
   requires:
   - name: cfdemoS0020227452-xsuaa
   - name: cfdemoS0020227452-destination-service
+  - name: cfdemoS0020227452-repo-rt
   provides:
   - name: srv-api
     properties:
@@ -31,6 +32,7 @@ modules:
       url: ~{srv-url}
   - name: cfdemoS0020227452-xsuaa
   - name: cfdemoS0020227452-destination-service
+  - name: cfdemoS0020227452-repo-rt
     group: destinations
     properties:
       forwardAuthToken: false
@@ -74,12 +76,13 @@ resources:
 - name: cfdemoS0020227452-xsuaa
   type: org.cloudfoundry.managed-service
   parameters:
-    config:      
-      xsappname: cfdemo-${org}-${space}
-    path: ./xs-security.json
     service: xsuaa
-    service-plan: application
-  
+    service-plan: application   
+    config:
+      xsappname: cfdemoS0020227452-${org}-${space} 
+    path: ./xs-security.json   
+  properties:
+    XSAPPNAME: cfdemoS0020227452-${org}-${space} 
 - name: cfdemoS0020227452-repo-rt
   type: org.cloudfoundry.managed-service
   parameters:    
@@ -92,7 +95,6 @@ resources:
     service: html5-apps-repo
     service-name: cfdemoS0020227452-html5-srv
     service-plan: app-host
-
 - name: cfdemoS0020227452-destination-service
   type: org.cloudfoundry.managed-service
   parameters:

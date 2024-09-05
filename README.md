@@ -333,10 +333,11 @@ xs-security file
 {
     "xsappname": "cfdemo",
     "tenant-mode": "dedicated",
-    "scopes":
-    [{
-        "name": "$XSAPPNAME.Everyone",
-        "description": "Everyone"
+    "scopes":     
+    [
+        {
+            "name": "$XSAPPNAME.Everyone",
+            "description": "Everyone"
         },
         {
             "name": "uaa.user",
@@ -347,11 +348,12 @@ xs-security file
         {
             "name": "Everyone",
             "scope-references":[
-                "$XSAPPNAME.Everyone","uaa.user"
+                "$XSAPPNAME.Everyone",
+                "uaa.user"
             ]
         }
     ],
-    "role-collection":[
+    "role-collections":[
         {
             "name": "cfdemo_RC",
             "role-template-references":[
@@ -359,13 +361,13 @@ xs-security file
             ]
         }
     ],
-    "oauth-configuration":[
+    "oauth2-configuration":
         {
             "redirect-uris": [
                 "https://*.hana.ondemand.com/**"
             ]
         }
-    ]   
+     
 }
 ```
 add path parameters in resource __cfdemo-xsuaa__
