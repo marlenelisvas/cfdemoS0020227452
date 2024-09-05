@@ -451,3 +451,102 @@ Define new router in xs-app.json
   "welcomeFile": "/comxtendhrweb"
 }
 ```
+### Create web services application
+#### Edit Main.view and Main.Controller.js
+Main.view
+```xml
+
+  <content>
+      <Label id="idInpLbl" text="Get Service Path: "></Label>
+			<Input id="idInput"></Input>
+			<Button id="idBtn" press="onCallSRV" text="Call Service"></Button>
+			<TextArea id="idTextarea" growing="true" width="100%"></TextArea>
+  </content>
+```
+Main.controller
+
+```js
+  onCallSRV: function(n){
+            var self = this;          
+            var path = this.getView().byId("idInput").getValue();
+
+            $.ajax({
+                url: path,
+                type: "GET",
+                contentType: "text/plain",
+                success: function(data){
+                   self.setResponse(data);                   
+                },
+                error:function(error){
+                    MessageToast.show("Web Service error");
+                }
+            });
+            
+        },
+  setResponse:function(data){
+            var textArea = this.getView().byId("idTextarea");
+            textArea.setValue(data);
+			 
+        }
+```
+
+#### Add services in server.js
+```js
+app.get("/", function(req, res, next){
+    res.send("Welcome to Basic NodeJs "+ req.user.id);
+});
+
+app.get("/user", function(req, res, next){
+    res.send("I am  "+ req.user.id);
+});
+
+```
+
+### Destination Services
+
+For calls to destination services, we need to define the destination.
+
+__server.js__
+
+```js
+const services = xsenv.getServices({uaa: "cfdemoS0020227452-xsuaa"},{dest:{label: 'destination'}}); //xsuaa service & Destination
+```
+
+#### Destination reuse service
+
+__server.js__
+
+```js
+
+app.get('/destinations', async function(req, res){
+    try{
+        let res1 = await httpClient.executeHttpRequest(
+           {
+            destinationName: req.query.destinationX || '',
+            jwt: retrieveJwt(req)
+           },
+           {
+                method:'GET',
+                url: req.query.path || '/'
+           }
+        );
+        res.status(200).send(res1.data);
+    }
+    catch(error){
+        res.status(500).send(error.message);
+    }
+});
+``` 
+#### Add library httpClient
+
+__\srv\package.json__
+```json
+  "@sap-cloud-sdk/connectivity":"latest",
+  "@sap-cloud-sdk/core":"latest",
+  "@sap-cloud-sdk/http-client":"latest"
+```
+
+### create destination
+destination → nothwind
+
+
