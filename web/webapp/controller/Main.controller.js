@@ -15,9 +15,9 @@ function (Controller) {
             $.ajax({
                 url: path,
                 type: "GET",
-                contentType: "text/plain",
+                contentType: "application/json",
                 success: function(data){
-                   self.setResponse(data);                   
+                    self.setResponse(JSON.stringify(data));                
                 },
                 error:function(error){
                     MessageToast.show("Web Service error");
