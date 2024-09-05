@@ -267,3 +267,28 @@ app.get("/", function(req, res, next){
 const port = process.env.PORT || 5000;
 app.listen(port, function(){console.log("Basic NodeJS listening on port " + port);});
 ```
+
+
+## Create HTML5 Application
+
+1. Right click on __mta.yaml files__
+
+  select → Create MTA Module from template
+  
+  Step 1: Select Module template
+    SAP Fiori generator
+
+  Step 2: Template Selection
+    Basic
+  Step 3: Data Source and Service Selection
+    Data source → Connect to an OData Service
+    OData Service URL → https://services.odata.org/V2/Northwind/Northwind.svc
+
+  Step 4: Entity Selection
+    View Name → Main
+    Project Attributes:
+      Module name → web
+      pplication Title: CF Demo non-CAP
+      Application Namespace → com.xtendhr
+      .....
+      Minimum SAPUI5 version → 1.124.5
