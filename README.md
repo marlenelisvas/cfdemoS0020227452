@@ -292,3 +292,39 @@ app.listen(port, function(){console.log("Basic NodeJS listening on port " + port
       Application Namespace → com.xtendhr
       .....
       Minimum SAPUI5 version → 1.124.5
+
+## NodeJS Server to connect to destination services
+
+add requires
+```yaml
+modules:
+- name: cfdemoS0020227452-service
+.......
+
+  requires:
+  ....
+- name: cfdemoS0020227452-destination-service
+
+``` 
+
+## Create html5 runtime service      
+
+go to resources
+ above __cfdemo-repo-host__ create runtime services 
+
+```yaml
+- name: cfdemo-xsuaa
+  type: org.cloudfoundry.managed-service
+   ...
+
+- name: cfdemo-repo-rt
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service-plan: app-runtime 
+    service: html5-apps-repo     
+
+ ...
+- name: cfdemoS0020227452-repo-host
+```
+
+

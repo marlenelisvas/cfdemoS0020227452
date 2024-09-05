@@ -7,6 +7,7 @@ modules:
   path: srv
   requires:
   - name: cfdemoS0020227452-xsuaa
+  - name: cfdemoS0020227452-destination-service
   provides:
   - name: srv-api
     properties:
@@ -81,12 +82,20 @@ resources:
       xsappname: cfdemo-${org}-${space}
     service: xsuaa
     service-plan: application
+  
+- name: cfdemoS0020227452-repo-rt
+  type: org.cloudfoundry.managed-service
+  parameters:    
+    service-plan: app-runtime 
+    service: html5-apps-repo      
+
 - name: cfdemoS0020227452-repo-host
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
     service-name: cfdemoS0020227452-html5-srv
     service-plan: app-host
+
 - name: cfdemoS0020227452-destination-service
   type: org.cloudfoundry.managed-service
   parameters:
