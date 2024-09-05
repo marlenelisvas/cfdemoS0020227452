@@ -293,7 +293,7 @@ app.listen(port, function(){console.log("Basic NodeJS listening on port " + port
       .....
       Minimum SAPUI5 version → 1.124.5
 
-## NodeJS Server to connect to destination services
+### NodeJS Server to connect to destination services
 
 add requires
 ```yaml
@@ -307,7 +307,7 @@ modules:
 
 ``` 
 
-## Create html5 runtime service      
+### Create html5 runtime service      
 
 go to resources
  above __cfdemo-repo-host__ create runtime services 
@@ -326,5 +326,126 @@ go to resources
  ...
 - name: cfdemoS0020227452-repo-host
 ```
+### HTML authenticated
+Add new file (xs-security.json) and add path in mta.yaml
+xs-security file
+```json
+{
+    "xsappname": "cfdemo",
+    "tenant-mode": "dedicated",
+    "scopes":
+    [{
+        "name": "$XSAPPNAME.Everyone",
+        "description": "Everyone"
+        },
+        {
+            "name": "uaa.user",
+            "description": "UAA"
+        }
+    ],
+    "role-templates":[
+        {
+            "name": "Everyone",
+            "scope-references":[
+                "$XSAPPNAME.Everyone","uaa.user"
+            ]
+        }
+    ],
+    "role-collection":[
+        {
+            "name": "cfdemo_RC",
+            "role-template-references":[
+                "$XSAPPNAME.Everyone"
+            ]
+        }
+    ],
+    "oauth-configuration":[
+        {
+            "redirect-uris": [
+                "https://*.hana.ondemand.com/**"
+            ]
+        }
+    ]   
+}
+```
+add path parameters in resource __cfdemo-xsuaa__
+```yaml
+resources:
+- name: cfdemo-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      oauth2-configuration:
+        redirect-uris:
+        - https://*.hana.ondemand.com/**
+      tenant-mode: dedicated
+      xsappname: cfdemo-${org}-${space}
+    path: ./xs-security.json
+    ...
+```
+remove __oauth2-configuration__ from mta.yaml
+```yaml    
+    tenant-mode: dedicated  
+    
+    oauth2-configuration:
+        redirect-uris:
+        - https://*.hana.ondemand.com/**
+  ``` 
+cfdemo-xsuaa final
+
+ ```yaml
+resources:
+- name: cfdemoS0020227452-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      xsappname: cfdemoS0020227452-${org}-${space}      
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+```
+###  
+change de role in xs-scurity
+
+Eveyone access public
 
 
+define new properties XSAPPNAME in __cfdemo-xsuaa__ 
+
+```yaml
+resources:
+- name: cfdemoS0020227452-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      xsappname: cfdemoS0020227452-${org}-${space}      
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+  properties:
+    XSAPPNAME: cfdemoS0020227452-${org}-${space}  
+
+```
+### App Router
+
+Define new router in xs-app.json
+
+```json
+{
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/(.*)$",
+      "target": "$1",
+      "destination": "srv-api",
+      "csrfProtection": false
+    },{
+      "source": "^/(.*)$",
+      "target":"$1",
+      "service":"html5-apps-repor-rt",
+      "authenticationType": "xsuaa"
+    }
+  ],
+  "welcomeFile": "/comxtendhrweb"
+}
+```

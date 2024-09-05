@@ -2,9 +2,16 @@
   "authenticationMethod": "route",
   "routes": [
     {
-      "source": "^/(.*)$",
-      "target": "$1",
-      "destination": "srv-api"
+      "source": "^/srv/(.*)$",      
+      "destination": "srv-api",
+      "csrfProtection": false,
+      "target": "$1"
+    },
+    {
+      "source": "^(.*)$",
+      "target":"$1",
+      "service":"html5-apps-repo-rt",
+      "authenticationType": "xsuaa"
     }
   ],
   "welcomeFile": "/comxtendhrweb"

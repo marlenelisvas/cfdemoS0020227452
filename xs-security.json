@@ -1,0 +1,37 @@
+{
+    "xsappname": "cfdemoS0020227452",
+    "tenant-mode": "dedicated",
+    "scopes":
+    [{
+        "name": "$XSAPPNAME.Everyone",
+        "description": "Everyone"
+        },
+        {
+            "name": "uaa.user",
+            "description": "UAA"
+        }
+    ],
+    "role-templates":[
+        {
+            "name": "Everyone",
+            "scope-references":[
+                "$XSAPPNAME.Everyone","uaa.user"
+            ]
+        }
+    ],
+    "role-collection":[
+        {
+            "name": "cfdemo_RC",
+            "role-template-references":[
+                "$XSAPPNAME.Everyone"
+            ]
+        }
+    ],
+    "oauth-configuration":[
+        {
+            "redirect-uris": [
+                "https://*.hana.ondemand.com/**"
+            ]
+        }
+    ]   
+}

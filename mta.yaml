@@ -74,12 +74,9 @@ resources:
 - name: cfdemoS0020227452-xsuaa
   type: org.cloudfoundry.managed-service
   parameters:
-    config:
-      oauth2-configuration:
-        redirect-uris:
-        - https://*.hana.ondemand.com/**
-      tenant-mode: dedicated
+    config:      
       xsappname: cfdemo-${org}-${space}
+    path: ./xs-security.json
     service: xsuaa
     service-plan: application
   
