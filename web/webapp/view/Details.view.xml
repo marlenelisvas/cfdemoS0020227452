@@ -1,0 +1,35 @@
+<mvc:View controllerName="com.xtendhr.web.controller.Details" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" 
+xmlns="sap.m" xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:t="sap.ui.table">
+	<Page id="id_page" title="{i18n>title}" navButtonPress="onNav_Back" showNavButton="true">
+		<content>
+			<Panel id="idpnl1" expand="true" headerText="Shirt Details" width="auto" class="sapUiResponsiveMargin" expandable="true">
+				<content>
+					<VBox id="idbpx1" class="sapUiSmallMargin" fitContainer="true">
+						<f:SimpleForm id="objDetails" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12"
+							adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+							singleContainerFullSize="false">
+							<f:content>
+								<Label id="idlab1" text="shirtID"/>
+								<Text id="idtxt1" text="{shirt>externalCode}"/>
+								<!---->
+								<Label id="idlab2" text="Color"/>
+								<Text id="idtxt2" text="{shirt>cust_ShirtColor}"/>
+								<!---->
+								<Label id="idlab3" text="Size"/>
+								<Text id="idtxt3" text="{shirt>cust_ShirtSize}"/>
+								<!---->
+								<Label id="idlab4" text="Employee"/>
+								<Text id="idtxt4" text="{shirt>cust_Employee}"/>
+								<!---->
+								<Label id="idlab5" text="Date"/>
+								<Text id="idtxt5" text="{ path: 'shirt>createdDateTime', type: 'sap.ui.model.type.DateTime', 
+                                       formatOptions: { pattern: 'yyyy-MM-dd\'T\'HH:mm:ss' } }"/>
+							</f:content>
+						</f:SimpleForm>
+					</VBox>
+				</content>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

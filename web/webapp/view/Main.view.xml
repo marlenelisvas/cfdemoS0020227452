@@ -1,12 +1,21 @@
 <mvc:View controllerName="com.xtendhr.web.controller.Main"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true" 	
+    xmlns:l="sap.ui.layout"
     xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+    <Page id="iDPage" title="{i18n>title}">
         <content>
-        	<Label id="idInpLbl" text="Get Service Path: "></Label>
-			<Input id="idInput"></Input>
-			<Button id="idBtn" press="onCallSRV" text="Call Service"></Button>
-			<TextArea id="idTextarea" growing="true" width="100%"></TextArea>
+        	<l:VerticalLayout width="80%">
+        	<VBox class="sapUiTinyMargin">
+				<l:HorizontalLayout id="TileContainerExpanded" allowWrapping="true"  class="sapUiTinyMarginTopBottom">
+					<GenericTile header="Northwind" subheader="Call services" press="NavigateToCallService" class="sapUiTinyMarginEnd">
+						
+					</GenericTile>
+                  <GenericTile header="SuccessFactors MDF Integration" subheader="Call services" press="NavigateTo_SSFF_MDF" class="sapUiTinyMarginEnd">
+						
+					</GenericTile>
+				</l:HorizontalLayout>
+			</VBox>
+            	</l:VerticalLayout>
         </content>
     </Page>
 </mvc:View>

@@ -31,6 +31,7 @@ app.get("/user", function(req, res, next){
 
 //destination reuse service
 // /srv/destinations?destinationX=northwind&path=Regions
+///srv/destinations?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452(529518L)
 
 app.get('/destinations', async function(req, res){
     try{
@@ -44,6 +45,7 @@ app.get('/destinations', async function(req, res){
                 url: req.query.path || '/'
            }
         );
+        console.debug(res1.data);
         res.status(200).send(res1.data);
     }
     catch(error){

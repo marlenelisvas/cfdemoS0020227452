@@ -1,5 +1,5 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
+    "com/xtendhr/web/controller/BaseController",
 ],
 function (Controller) {
     "use strict";
@@ -8,27 +8,12 @@ function (Controller) {
         onInit: function () {
 
         },
-        onCallSRV: function(n){
-            var self = this;          
-            var path = this.getView().byId("idInput").getValue();
-
-            $.ajax({
-                url: path,
-                type: "GET",
-                contentType: "application/json",
-                success: function(data){
-                    self.setResponse(JSON.stringify(data));                
-                },
-                error:function(error){
-                    MessageToast.show("Web Service error");
-                }
-            });
-            
+        NavigateToCallService: function(n){           
+            this.getRouter().navTo("CallService");
         },
-        setResponse:function(data){
-            var textArea = this.getView().byId("idTextarea");
-            textArea.setValue(data);
-			 
+        NavigateTo_SSFF_MDF: function(n){           
+            this.getRouter().navTo("CallServiceSSFF");
         }
+ 
     });
 });

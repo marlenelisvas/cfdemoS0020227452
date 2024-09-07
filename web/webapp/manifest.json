@@ -73,6 +73,12 @@
         "dataSource": "mainService",
         "preload": true,
         "settings": {}
+      },
+      "odata":{
+        "type": "sap.ui.model.json.JSONModel"
+      },
+      "shirt":{
+        "type": "sap.ui.model.json.JSONModel"
       }
     },
     "resources": {
@@ -99,7 +105,26 @@
           "target": [
             "TargetMain"
           ]
-        }
+        },
+        {
+					"pattern": "CallService",
+					"name": "CallService",
+					"target": [
+						"CallService"
+					]
+				},
+        {
+					"pattern": "CallServiceSSFF",
+					"name": "CallServiceSSFF",
+					"target": [
+						"CallServiceSSFF"
+					]
+				},
+        {
+					"pattern": "Details/{objectId}",
+					"name": "Details",
+					"target": "Details"
+				}
       ],
       "targets": {
         "TargetMain": {
@@ -108,7 +133,23 @@
           "clearControlAggregation": false,
           "viewId": "Main",
           "viewName": "Main"
+        },
+        "CallService": {
+          "viewType": "XML",
+          "viewName": "CallService",
+          "viewId": "CallService"
+        },
+        "CallServiceSSFF": {
+          "viewType": "XML",
+          "viewName": "CallServiceSSFF",
+          "viewId": "CallServiceSSFF"
+        },
+        "Details": {
+          "viewType": "XML",
+          "viewName": "Details",
+          "viewId": "Details"
         }
+
       }
     },
     "rootView": {
