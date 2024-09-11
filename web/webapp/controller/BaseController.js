@@ -57,62 +57,47 @@ sap.ui.define([
 		onNavBack: function () {
 			this.getRouter().navTo("RouteMain", {}, true /*no history*/ );
 		},
-		createMessage: function (oType, fOnClose, sMessage) {
-			var sTitle = this.getResourceBundle().getText("warning");
-			sMessage = sMessage ? sMessage : this.getResourceBundle().getText("cancelMessage");
-			var aActions = [this.getResourceBundle().getText("dialogConfirm"), this.getResourceBundle().getText("cancel")];
-
-			this.show_Message(oType, sTitle, sMessage, fOnClose, aActions);
-		},
-		createWarningMessage: function (fOnClose, sMessage) {
-			var sTitle = this.getResourceBundle().getText("warning");
-			sMessage = sMessage ? sMessage : this.getResourceBundle().getText("cancelMessage");
-			var aActions = [this.getResourceBundle().getText("dialogConfirm"), this.getResourceBundle().getText("cancel")];
-			ErrorHandler.showWarning(sTitle, sMessage, fOnClose, aActions);
-		},
-		show_Message: function (oType, sTitle, sMessage, onClose, aActions, iDuration) {
-
-			switch (oType) {
-			case "info":
-				MessageBox.information(sMessage, {
-					title: sTitle,
-					onClose: onClose,
-					actions: aActions
-				});
-				break;
-			case "error":
-				MessageBox.error(sMessage, {
-					title: sTitle,
-					onClose: onClose,
-					actions: aActions
-				});
-				break;
-			case "warning":
-				MessageBox.warning(sMessage, {
-					title: sTitle,
-					onClose: onClose,
-					actions: aActions
-				});
-				break;
-			default:
-				// showMessageToast: function (sMessage, iDuration) {
-				// 	if (!iDuration) {
-				// 		iDuration = 5000;
-				// 	}
-				// 	MessageToast.show(sMessage, {
-				// 		duration: iDuration,
-				// 		closeOnBrowserNavigation: false
-				// 	});
-				// }
-				break;
-			}
-
-		},
-			createModel: function (data) {
+		
+		createModel: function (data) {
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData(data);
 			return oModel;
 		},
+		onCallSRV: function(path, type, cont, enableAsync, oModel, opt){   
+            var self = opt;
+            $.ajax({
+                url: path,
+                type: type,
+                contentType:cont ,
+                async: enableAsync, 
+                beforeSend: function () {
+					self.getView().setBusy(true);
+				},
+                success: function(data){ 
+                    switch (type){
+                        case "GET":
+							if(oModel === "shirt"){
+								self.getView().setModel(self.createModel(data.d.results[0]), oModel);
 
+							}else{
+								self.getOwnerComponent().getModel(oModel).setData(data);
+								self.getView().getModel("odata");							
+							}
+								
+                            break;   
+                        case "DELETE":
+                            self.initialData();
+                            MessageToast.show("Se ha eliminado correctamente")
+                        break;                       
+                    }  
+                    self.getView().setBusy(false);           
+                },
+                error:function(error){
+                    MessageToast.show("Web Service error");
+                    self.getView().setBusy(false);    
+                }
+            });
+            
+        },
 	});
 });

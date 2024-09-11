@@ -1,0 +1,39 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">
+	<Dialog id="newShirt" title="New Shirt">
+		<content>
+			
+				<f:SimpleForm id="sampleform4" editable="true" layout="ColumnLayout" title="Shirt" columnsM="2" columnsL="2" columnsXL="2">
+					<f:content>
+						<Label id="lbl" text="Size"/>
+						<ComboBox id="cboSize" selectedKey="{newShirt>/cust_ShirtSize}" visible="true" valueState="None"
+							selectionChange="onChangeSize">
+							<items>
+								<core:Item id="itm_0" text="SS_Small" enabled="true" key="SS_Small"/>
+								<core:Item id="itm_1" text="SS_Medium" enabled="true" key="SS_Medium"/>
+								<core:Item id="itm_2" text="SS_Large" enabled="true" key="SS_Large"/>
+							</items>
+						</ComboBox>
+						<Label id="lbl1" text="Color"/>
+                        <ComboBox id="cboColor" selectedKey="{newShirt>/cust_ShirtColor}"  visible="true" valueState="None"
+							selectionChange="onChangeColor">
+							<items>
+								<core:Item id="item_0" text="CC_NavyBlue" enabled="true" key="CC_NavyBlue"/>
+								<core:Item id="item_1" text="CC_Grey" enabled="true" key="CC_Grey"/>
+								<core:Item id="item_2" text="CC_Red" enabled="true" key="CC_Red"/>
+                                <core:Item id="item_3" text="CC_Black" enabled="true" key="CC_Black"/>
+							</items>
+						</ComboBox>						
+					</f:content>
+				</f:SimpleForm>
+		
+		</content>
+		<footer>
+			<Toolbar id="tlbar">
+				<content>			
+					<Button id="Submit" type="Accept" text="Save" press=".submit"/>
+					<Button id="Cancel" text="Cancel" type="Emphasized" press="._closeDialog" />
+				</content>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

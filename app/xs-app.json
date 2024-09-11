@@ -5,7 +5,8 @@
       "source": "^/srv/(.*)$",      
       "destination": "srv-api",
       "csrfProtection": false,
-      "target": "$1"
+      "target": "$1",
+      "httpMethods": ["GET", "POST", "DELETE"]
     },
     {
       "source": "^(.*)$",

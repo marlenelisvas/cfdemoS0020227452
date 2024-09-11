@@ -9,7 +9,7 @@ function (Controller) {
 
         },
         NavigateToCallService: function(n){           
-            this.getRouter().navTo("CallService");
+            this.getRouter().navTo("WebService");
         },
         NavigateTo_SSFF_MDF: function(n){           
             this.getRouter().navTo("CallServiceSSFF");

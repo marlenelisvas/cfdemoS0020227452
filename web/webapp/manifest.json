@@ -107,10 +107,10 @@
           ]
         },
         {
-					"pattern": "CallService",
-					"name": "CallService",
+					"pattern": "WebService",
+					"name": "WebService",
 					"target": [
-						"CallService"
+						"WebService"
 					]
 				},
         {
@@ -134,10 +134,10 @@
           "viewId": "Main",
           "viewName": "Main"
         },
-        "CallService": {
+        "WebService": {
           "viewType": "XML",
-          "viewName": "CallService",
-          "viewId": "CallService"
+          "viewName": "WebService",
+          "viewId": "WebService"
         },
         "CallServiceSSFF": {
           "viewType": "XML",

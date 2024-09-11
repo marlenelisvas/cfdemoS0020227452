@@ -1,85 +1,106 @@
 sap.ui.define([
     "com/xtendhr/web/controller/BaseController",
     "sap/m/MessageToast",
-	"sap/ui/model/json/JSONModel"
+    "sap/m/MessageBox",
+    "sap/m/Dialog",
+    "sap/m/library",
+    "sap/m/Button",
+    "sap/m/Text",
+	"sap/ui/model/json/JSONModel",
+    "sap/ui/table/RowActionItem",
+    "sap/ui/model/Sorter",
+    "sap/ui/core/library",
 ],
-function (Controller, MessageToast, JSONModel) {
+function (Controller, MessageToast, MessageBox,  Dialog, mobileLibrary, Button, Text, JSONModel, RowActionItem, Sorter, CoreLibrary) {
     "use strict";
+    const SortOrder = CoreLibrary.SortOrder;
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.DialogType
+	var DialogType = mobileLibrary.DialogType;
 
     return Controller.extend("com.xtendhr.web.controller.CallService", {
         onInit: function () {
-            this._objectSelected={
+            var oRouter = this.getRouter();
+          /*  this._objectSelected={
                 select:true,
                 externalCode:null,
+                index: 0,
                 cust_ShirtSize:null,
                 cust_ShirtColor:null,
                 cust_Employee: "103242"
             };            
-            this._path= "/srv/destinations?destinationX=" ;
-           
+            this._path1= "/srv/destinations?destinationX=" ;
+            this._path2= "/srv/add?destinationX=" ;*/
+            
+
+
+            var newObj={
+                cust_ShirtSize: "",
+                cust_ShirtColor: "",
+                cust_Employee: "104016"
+            };
+
+            var newModel= new JSONModel(newObj);
+			this.getView().setModel(newModel, "newShirt");
+
 
             var fnViewPress = this.onViewPress.bind(this);
+           // var fnDeletePress = this.onDeletePress.bind(this);
+           // var fnEditPress = this.onEditPress.bind(this);
 			var oTemplate = new sap.ui.table.RowAction({
 				items: [
 					new RowActionItem({
 						icon: "sap-icon://display",
 						text: "",
 						press: fnViewPress
+					})/*,
+                    new RowActionItem({
+						icon: "sap-icon://delete",
+						text: "",
+						press: fnDeletePress
 					})
+                    ,
+                    new RowActionItem({
+						icon: "sap-icon://edit",
+						text: "",
+						press: fnEditPress
+					})*/
 				]
 			});
 			var oTable = this.getView().byId("idList");
 			oTable.setRowActionTemplate(oTemplate);
 			oTable.setRowActionCount(1);
 			oTable.setVisibleRowCountMode("Auto");
-
-            this._onRouteMatched();
+            oRouter.getRoute("CallServiceSSFF").attachMatched(this._onRouteMatched, this);		
+    
         },
-
-        _onRouteMatched: function () {
-            this.onCallSRV("sfdemo","cust_CompanyShirts_S0020227452?$format=json", "GET", "application/json", true);
+        _onRouteMatched: function () {  
+            this.initialData();
         },
-        onCallSRV: function(dest, query, type, cont, enableAsync){           
-            var path = this._path + dest + "&path=" + query;
-            var self = this;
+        initialData:function(){
+            var url = "/srv/all?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452?$format=json";
+            this.onCallSRV(url, "GET", "application/json", true, "odata", this);
+        },
+        _onCallSRV_: function(_url, type, cont, obj, enableAsync){     
+            var self = this;                
             $.ajax({
-                url: path,
+                url: _url,
                 type: type,
                 contentType:cont ,
-                async: enableAsync,
-                success: function(data){ 
-                    switch (type){
-                        case "GET":
-                            self.getOwnerComponent().getModel("odata").setData(data);
-                            self.getView().getModel("odata");
-                            break;
-                        case "DELETE":
-                            MessageToast.show("Se ha eliminado correctamente")
-                            break;
-                    }         
-                },
-                error:function(error){
-                    MessageToast.show("Web Service error");
-                }
-            });
-            
-        },
-        _onCallSRV_: function(dest, query, type, cont, obj, enableAsync){           
-            var path = this._path + dest + "&path=" + query;
-            var self = this;          
-      
-            $.ajax({
-                url: path,
-                type: type,
-                contentType:cont ,
-                body: obj,
+                data: JSON.stringify(obj) ,                
                 async: enableAsync,
                 beforeSend: function () {
 					self.getView().setBusy(true);
+                   
 				},
-                success: function(data){ 
-                    //self.getOwnerComponent().getModel("odata").setData(data);
-                    self.getView().getModel("odata");
+                success: function(data){                   
+                    switch (type){
+                        case "POST":
+                           self.getView().getModel("odata");
+                           self.initialData();                                              
+                    }
                     self.getView().setBusy(false);                              
                 },
                 error:function(error){
@@ -89,42 +110,70 @@ function (Controller, MessageToast, JSONModel) {
             });
             
         },
-        onDelete:function(){
-            //cust_CompanyShirts_S0020227452(529518L)
-            var temp= "";
-            if(this._objectSelected.select){
-                temp= "cust_CompanyShirts_S0020227452("+ this._objectSelected.externalCode+"L)";
-                this.onCallSRV("sfdemo",temp, "DELETE", "application/json", true);
-            }
-           
+        onCreate:function(){         
+            this.onOpenPopoverDialog();         
         },
-        onCreate:function(){
-            var temp={
-                cust_ShirtSize: "SS_Medium",
-                cust_ShirtColor: "CC_Red",
-                cust_Employee: "104016"
-            };
-            this._onCallSRV_("sfdemo","cust_CompanyShirts_S0020227452", "POST", "application/json", temp);
-        },
-        generate_Metadata:function(params) {
-            if(this._objectSelected!==null || this._objectSelected!==undefined){
-                var externalCode="";
-                var metadata=
+        /*
+        onDeletePress:function(oEvent){
+            var obj = this.getExternaCode(oEvent);  
+             //cust_CompanyShirts_S0020227452(529518L)
+            var url = "/srv/delete?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452("+ obj.externalCode+"L)";           
+            
+            var self = this;
+            if (!this.oApproveDialog) {
+				this.oApproveDialog = new Dialog({
+					type: DialogType.Message,
+					title: "Confirm",
+					content: new Text({ text: "Do you want to delete?" }),
+					beginButton: new Button({
+						type: ButtonType.Emphasized,
+						text: "YES",
+						press: function () {							
+                            self.onCallSRV(url, "DELETE", "application/json", true);
+							this.oApproveDialog.close();
+                            MessageBox.success(obj.externalCode+ " deleted.");
+						}.bind(this)
+					}),
+					endButton: new Button({
+						text: "Cancel",
+						press: function () {
+							this.oApproveDialog.close();
+						}.bind(this)
+					})
+				});
+			}
+
+			this.oApproveDialog.open();
+
+
+        },*/
+       
+        /* generate_Metadata:function(params) {
+            var metadata=
                 {
                     "__metadata": {
                         "uri": "https://apisalesdemo2.successfactors.eu/odata/v2/cust_CompanyShirts_S0020227452("+ params.externalCode+ "L)",
                         "type": "SFOData.cust_CompanyShirts_S0020227452"
                     },
-                    "externalCode":params.externalCode ,
+                  
                     "cust_ShirtSize": params.cust_ShirtSize,
                     "cust_ShirtColor": params.cust_ShirtColor
-                      
-    
-                };
-            }
-
-           
+                };            
+                return metadata;           
         },
+       onEditPress :function(oEvent){
+            var obj = this.getExternaCode(oEvent);
+            var temp={
+                externalCode: obj.externalCode,
+                cust_ShirtSize: "SS_Medium",
+                cust_ShirtColor: "CC_NavyBlue",
+                cust_Employee: "104016"
+               };
+            var metadata = this.generate_Metadata(temp);
+            var url = "/srv/edit?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452/upsert";     
+            this._onCallSRV_(url, "POST", "application/json", metadata);
+            
+        },*/
         onSelectionChange: function(oEvent){
             var oItem = oEvent.getSource();
 			var oBindingContext = oItem.getBindingContext("odata");			
@@ -137,32 +186,74 @@ function (Controller, MessageToast, JSONModel) {
             var exCode = oBindingContext.getProperty("externalCode");
             this._objectSelected.externalCode = exCode;
             this._objectSelected.select = true;
+            this._objectSelected.index = index;
             this.active_button();
         },
-        active_button: function(){
-            if(this._objectSelected.select){
-                this.getView().byId("deleteButton").setEnabled(true);
-            }else{
-                this.getView().byId("deleteButton").setEnabled(true);
-            }
+        onRefresh:function(){
+            this.initialData();            
         },
-        isNavigated: function(sNavigatedItemId, sItemId) {
-			return sNavigatedItemId === sItemId;
-		},
+
+       
         onViewPress: function (oEvent) {
 
             var oItem = oEvent.getSource();
 			var sPath = oItem.getBindingContext("odata").sPath;
 			var sObjectId = sPath.split("/");
 			this._oSelectedItem = oItem;
-			
-			//Fix issue of selectiong twice the same item
-			oItem.setSelected(false);
-			
-			this.getRouter().navTo("Details", {
-				objectId: sObjectId[3],
-				externalCode: oItem.getBindingContext("odata").getPropertey("externalCode")
-			});
-		}
+		;
+            this.getRouter().navTo("Details", this.getExternaCode(oEvent));
+		},
+        getExternaCode:function(oEvent){
+            var oItem = oEvent.getSource();
+			var sPath = oItem.getBindingContext("odata").sPath;
+			var sObjectId = sPath.split("/");
+			this._oSelectedItem = oItem;
+            var index =  sObjectId[3];
+            var externalCode= this.getView().getModel("odata").getProperty("externalCode", oEvent.getSource().getBindingContext("odata"));
+
+            const oTable = this.byId("idList");
+            oTable.setSelectedIndex(parseInt(index));           
+            return {
+                objectId: index,
+                externalCode: externalCode
+            }
+        },
+        onNavBack: function () {		
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("RouteMain", {}, true /*no history*/ );	
+		},
+        onSort: function(){
+            const oView = this.getView();
+			const oTable = oView.byId("idList");
+			const oCategoriesColumn = oView.byId("externalCode");
+
+			oTable.sort(oCategoriesColumn, this._bSortColumnDescending ? SortOrder.Descending : SortOrder.Ascending, /*extend existing sorting*/true);
+			this._bSortColumnDescending = !this._bSortColumnDescending;
+        },
+        onOpenPopoverDialog: function () {
+			// create dialog lazily
+			if (!this.oMPDialog) {
+				this.oMPDialog =                
+                
+                
+                this.loadFragment({
+					name: "com.xtendhr.web.view.fragments.NewShirt"
+				});
+			}
+			this.oMPDialog.then(function (oDialog) {
+				this.oDialog = oDialog;
+				this.oDialog.open();		
+			}.bind(this));
+		},
+        _closeDialog: function () {
+			this.oDialog.close();
+		},
+        submit: function(){
+            var url = "/srv/add?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452?$format=json"
+            var obj = this.getView().getModel("newShirt").getData();
+            this._onCallSRV_(url, "POST", "application/json", obj, true);
+            this._closeDialog();
+
+        }
     });
 });

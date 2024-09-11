@@ -1,71 +1,61 @@
-<mvc:View controllerName="com.xtendhr.web.controller.CallServiceSSFF" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m"
+<mvc:View controllerName="com.xtendhr.web.controller.CallServiceSSFF" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table"
 	xmlns:core="sap.ui.core">
 	<Page id="IDpage" title="{i18n>title}" navButtonPress="onNavBack" showNavButton="true">
 		<content>
 			<Panel id="idpnl" expand="true" headerText="Shirt List" width="auto" class="sapUiResponsiveMargin" expandable="false">
 				<content>
 					<ScrollContainer id="idscr1" width="auto" vertical="true" focusable="true">
-						<Table id="idList" growing="true" growingThreshold="10" items="{ path: 'odata>/d/results' }" selectionChange="selected">
-							<headerToolbar>
+						<t:Table id="idList" rows="{path: 'odata>/d/results'}" visible="true" selectionMode="Single" >
+							<t:extension>
 								<OverflowToolbar id="idovft">
 									<content>
 										<ToolbarSpacer id="idovfts"/>
 										<SearchField id="searchField" width="20%" placeholder="{i18n>searchFieldPlaceholder}" 
-											search=".onSearch"/>
+														search=".onSearch"/>
 										<Button id="addButton" icon="sap-icon://add" tooltip="{i18n>createButtonText}" press=".onCreate">
 											<layoutData>
 												<OverflowToolbarLayoutData id="idovft1" priority="NeverOverflow"/>
 											</layoutData>
-										</Button>
-										<Button id="deleteButton" icon="sap-icon://delete" press=".onDelete" enabled="false">
-											<layoutData>
-												<OverflowToolbarLayoutData id="idovft2" priority="NeverOverflow"/>
-											</layoutData>
-										</Button>
-										<Button id="refreshButton" icon="sap-icon://refresh"  press=".onRefresh"/>
-										<Button id="sortUsersButton" icon="sap-icon://sort"  press=".onSort"/>
+										</Button>								
+										<Button id="refreshButton" icon="sap-icon://refresh"  press=".onRefresh" />
+										<Button id="sortUsersButton" icon="sap-icon://sort"  press=".onSort"	tooltip="Sort External Code"/>
 									</content>
-								</OverflowToolbar>
-							</headerToolbar>
-							<columns>
-								<Column id="External_Code">
+								</OverflowToolbar>								
+							</t:extension>
+							<t:columns>
+								<t:Column id="externalCode" 	sortProperty="externalCode">
 									<Text id="idtxt8" text="External Code"/>
-								</Column>
-								<Column id="Shirt_Color">
-									<Text id="idtxt9" text="Shirt Color"/>
-								</Column>
-								<Column id="Shirt_Size">
-									<Text id="idtxt10" text="Shirt Size"/>
-								</Column>
-								<Column id="Employee">
-									<Text id="idtxt11" text="Employee"/>
-								</Column>
-								<Column id="idcolumn" ></Column>
-								
-							</columns>
-							<items>
-								<ColumnListItem id="idclm1" press=".onSelectionChange" type="Active"
-									navigated="{ parts: [ 'odata>/navigatedItem', 'odata>externalCode' ], formatter: '.isNavigated' }">
-									<cells>
+									<t:template>
 										<Text id="idtxt12" text="{odata>externalCode}"/>
-									</cells>
-									<cells>
+									</t:template>
+								</t:Column>
+								<t:Column id="idCol1">
+									<Text id="idtxt9" text="Shirt Color"/>
+									<t:template>
 										<Text id="idtxt13" text="{odata>cust_ShirtColor}"/>
-									</cells>
-									<cells>
+									</t:template>
+								</t:Column>
+								<t:Column id="idCol2">
+									<Text id="idtxt10" text="Shirt Size"/>
+									<t:template>
 										<Text id="idtxt14" text="{odata>cust_ShirtSize}"/>
-									</cells>
-									<cells>
-										<Text id="idtxt15" text="{odata>cust_Employee}"/>
-									</cells>
-									<cells>
-										<Text id="idtxt16" text="{ path: 'odata>createdDateTime', type: 'sap.ui.model.type.DateTime', 
-											formatOptions: { pattern: 'yyyy-MM-dd\'T\'HH:mm:ss' } }"/>
-									</cells>
-									
-								</ColumnListItem>
-							</items>
-						</Table>
+									</t:template>
+								</t:Column>
+								<t:Column id="createdBy">
+									<Text id="idtxt11" text="Created By"/>
+									<t:template>
+										<Text id="idtxt15" text="{odata>createdBy}"/>
+									</t:template>
+								</t:Column>
+								<t:Column id="cust_Employee">
+									<Text id="idtxt16" text="Employee"/>
+									<t:template>
+										<Text id="idtxt17" text="{odata>cust_Employee}"/>
+									</t:template>
+								</t:Column>
+																
+							</t:columns>
+						</t:Table>
 					</ScrollContainer>
 				</content>
 			</Panel>

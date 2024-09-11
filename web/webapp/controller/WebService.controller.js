@@ -6,7 +6,7 @@ sap.ui.define([
 function (Controller, MessageToast, JSONModel) {
     "use strict";
 
-    return Controller.extend("com.xtendhr.web.controller.CallService", {
+    return Controller.extend("com.xtendhr.web.controller.WebService", {
         onInit: function () {
 
         },
@@ -31,6 +31,11 @@ function (Controller, MessageToast, JSONModel) {
             var textArea = this.getView().byId("idTextarea");
             textArea.setValue(data);
 			 
-        }
+        },
+        onNavBack: function () {		
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("RouteMain", {}, true /*no history*/ );	
+
+		},
     });
 });
