@@ -280,18 +280,20 @@ app.listen(port, function(){console.log("Basic NodeJS listening on port " + port
 
   Step 2: Template Selection
     Basic
+
   Step 3: Data Source and Service Selection
     Data source → Connect to an OData Service
     OData Service URL → https://services.odata.org/V2/Northwind/Northwind.svc
 
   Step 4: Entity Selection
     View Name → Main
-    Project Attributes:
+    - Project Attributes:
       Module name → web
       pplication Title: CF Demo non-CAP
       Application Namespace → com.xtendhr
       .....
       Minimum SAPUI5 version → 1.124.5
+
 
 ### NodeJS Server to connect to destination services
 
@@ -544,6 +546,14 @@ __\srv\package.json__
   "@sap-cloud-sdk/connectivity":"latest",
   "@sap-cloud-sdk/core":"latest",
   "@sap-cloud-sdk/http-client":"latest"
+```
+
+requires for  __app ID-service__ and __app ID-approuter__ 
+```yaml
+requires:
+  - name: <app ID>-xsuaa
+  - name: <app ID>-destination-service
+  - name: <app ID>-repo-rt
 ```
 
 ### create destination

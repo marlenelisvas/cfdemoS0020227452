@@ -84,7 +84,7 @@ app.post('/add', async function(req, res){
            }
         );
         res.json(res1.data);
-        res.status(201).send("Completed");        
+        res.status(201).send("Successfully created");        
     }
     catch(error){
         res.status(500).send(error.message);
@@ -92,7 +92,7 @@ app.post('/add', async function(req, res){
 });
 
 app.post('/edit', async function(req, res){
-  //  res.json(req.body);
+ 
     try{
         let res1 = await httpClient.executeHttpRequest(
            {
@@ -105,8 +105,8 @@ app.post('/edit', async function(req, res){
                 data: req.body                
            }
         );
-       
-        res.status(200).send("completed");        
+        res.json(res1.data);
+        res.status(200).send("Successfully saved");        
     }
     catch(error){
         res.status(500).send(error.message);
