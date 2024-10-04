@@ -300,12 +300,12 @@ app.listen(port, function(){console.log("Basic NodeJS listening on port " + port
 add requires
 ```yaml
 modules:
-- name: cfdemoS0020227452-service
+- name: cfdemo-service
 .......
 
   requires:
   ....
-- name: cfdemoS0020227452-destination-service
+- name: cfdemo-destination-service
 
 ``` 
 
@@ -326,7 +326,7 @@ go to resources
     service: html5-apps-repo     
 
  ...
-- name: cfdemoS0020227452-repo-host
+- name: cfdemo-repo-host
 ```
 ### HTML authenticated
 Add new file (xs-security.json) and add path in mta.yaml
@@ -399,11 +399,11 @@ cfdemo-xsuaa final
 
  ```yaml
 resources:
-- name: cfdemoS0020227452-xsuaa
+- name: cfdemo-xsuaa
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      xsappname: cfdemoS0020227452-${org}-${space}      
+      xsappname: cfdemo-${org}-${space}      
     path: ./xs-security.json
     service: xsuaa
     service-plan: application
@@ -418,16 +418,16 @@ define new properties XSAPPNAME in __cfdemo-xsuaa__
 
 ```yaml
 resources:
-- name: cfdemoS0020227452-xsuaa
+- name: cfdemo-xsuaa
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      xsappname: cfdemoS0020227452-${org}-${space}      
+      xsappname: cfdemo-${org}-${space}      
     path: ./xs-security.json
     service: xsuaa
     service-plan: application
   properties:
-    XSAPPNAME: cfdemoS0020227452-${org}-${space}  
+    XSAPPNAME: cfdemo-${org}-${space}  
 
 ```
 ### App Router
@@ -511,7 +511,7 @@ For calls to destination services, we need to define the destination.
 __server.js__
 
 ```js
-const services = xsenv.getServices({uaa: "cfdemoS0020227452-xsuaa"},{dest:{label: 'destination'}}); //xsuaa service & Destination
+const services = xsenv.getServices({uaa: "cfdemo-xsuaa"},{dest:{label: 'destination'}}); //xsuaa service & Destination
 ```
 
 #### Destination reuse service
@@ -553,10 +553,175 @@ requires for  __app ID-service__ and __app ID-approuter__
 requires:
   - name: <app ID>-xsuaa
   - name: <app ID>-destination-service
-  - name: <app ID>-repo-rt
 ```
 
 ### create destination
 destination → nothwind
 
+### Subcription
+
+Edit __mta.yaml__ file
+
+Add under resources __cfdemo-registry__
+```yaml
+# ----------------------------------------------
+- name: cfdemo-registry
+# ----------------------------------------------
+  type: org.cloudfoundry.managed-service
+  requires:
+    - name: cfdemo-xsuaa
+    - name: app_api
+  parameters:
+    service: saas-registry
+    service-plan: application
+    service-name: cfdemo-registry
+    config:
+      appName: cfdemo-${org}-${space}
+      displayName: 'CF Demo MTA'
+      description: 'Demo Application'
+      category: 'XtendHR SaaS'
+      appUrls:
+        onSubscription: ~{app_api/url}/callback/v1.0/tenants/{tenantId}
+        getDependencies: ~{app_api/url}/callback/v1.0/dependencies
+      xsappname: cfdemo-${org}-${space}
+```
+add de service in approuter
+```yaml
+- name: cfdemo-registry
+```
+Add provides
+```yaml
+properties:      
+      name: srv
+      url: ~{url}
+```
+rename the requires>properties. 
+```yaml
+# before
+properties:      
+      name: srv-api
+      url: ~{srv-url}
+# after
+properties:      
+      name: srv
+      url: ~{url}
+```
+
+Final __cfdemo-approuter__
+
+```yaml
+# ----------------------------------------------
+- name: cfdemo-approuter
+# ----------------------------------------------
+  type: approuter.nodejs
+  path: app
+  provides:
+    - name: app_api
+      properties:
+        url: ${default-url}
+        application: ${app-name}
+  properties:
+    TENANT_HOST_PATTERN: '^(.*)-${space}-cfdemo-approuter.${default-domain}'
+  requires:
+  - name: srv-api
+    group: destinations
+    properties:      
+      name: srv
+      url: ~{url}
+      forwardAuthToken: true
+      timeout: 55000      
+  - name: cfdemo-xsuaa
+  - name: cfdemo-destination-service
+  - name: cfdemo-repo-rt
+  - name: cfdemo-registry
+```
+include subaccount configuration in __cfdemo-destination-service__
+```yaml
+
+- name: cfdemo-destination-service
+  type: org.cloudfoundry.managed-service
+  requires:
+    - name: srv-api
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+        #  ....
+        subaccount:
+              existing_destinations_policy: update
+              destinations:
+                - Name: srv-api
+                  Description: middleware service
+                  Authentication: NoAuthentication
+                  ProxyType: Internet
+                  Type: HTTP
+                  URL: ~{srv-api/url}
+                  HTML5.DynamicDestination: true
+                  HTML5.ForwardAuthToken: true
+                - Name: cfdemo-cfapi
+                  Description: CF cloud Controller API
+                  URL: ${controller-url}
+                  Type: HTTP
+                  ProxyType: Internet
+                  Authentication: OAuth2Password
+                  tokenServiceURL: ${authorization-url}/oauth/token
+                  clientId: cf
+                  clientSecret: 
+                  User: <setValueInCockpit>
+                  Password: <setValueInCockpit>
+      version: 1.0.0
+```
+Modify __cfdemo-service__
+```yaml
+# ----------------------------------------------
+- name: cfdemo-service
+# ----------------------------------------------
+  type: nodejs
+  # ....
+provides:
+  - name: srv-api
+    properties:
+    #before
+      srv-url: ${default-url}
+    # after
+      url: ${default-url}
+```
+
+Modify __xs-security.json__
+```json
+{
+    "scopes":[
+        {
+            "name": "$XSAPPNAME.Callback",
+            "description": "With this scope set, the callback for tenant onboarding",
+            "grant-as-authority-to-apps":[
+                "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+            ]
+        },
+        {
+            "name": "uaa.user",
+            "description": "UAA"
+        }
+
+    ],
+    "role-templates":[
+        {
+            "name": "Token_Exchange",
+            "description": "UAA Token Exchange",
+            "scope-references":[               
+                "uaa.user"
+            ]
+        }
+    ],
+    "oauth2-configuration":
+    {
+        "redirect-uris": [
+            "https://*.hana.ondemand.com/**"
+        ],
+        "token-validity": 3600
+    }
+}
+```
 
