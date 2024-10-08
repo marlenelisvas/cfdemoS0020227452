@@ -8,13 +8,14 @@ const {retrieveJwt} = require("@sap-cloud-sdk/connectivity");
 
 const JWTStrategy = require("@sap/xssec").JWTStrategy;
 //const services = xsenv.getServices({uaa: "cfdemoS0020227452-xsuaa"}); //xsuaa service
-const services = xsenv.getServices({uaa: "cfdemoS0020227452-xsuaa"},{dest:{label: 'destination'}}); //xsuaa service & Destination
+const services = xsenv.getServices({uaa: "cfdemo7452-xsuaa"},{dest:{label: 'destination'}}); //xsuaa service & Destination
 
 const app = express();
 
 passport.use(new JWTStrategy(services.uaa));
 app.use(passport.initialize());
 app.use(passport.authenticate("JWT",{session: false}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 /*app.get("/", function(req, res, next){

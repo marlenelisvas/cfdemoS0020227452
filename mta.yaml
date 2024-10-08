@@ -1,15 +1,15 @@
 _schema-version: "3.1"
-ID: cfdemoS0020227452
+ID: cfdemo7452
 version: 0.0.1
 modules:
 # ----------------------------------------------
-- name: cfdemoS0020227452-service
+- name: cfdemo7452-service
 # ----------------------------------------------
   type: nodejs
   path: srv
   requires:
-  - name: cfdemoS0020227452-xsuaa
-  - name: cfdemoS0020227452-destination-service  
+  - name: cfdemo7452-xsuaa
+  - name: cfdemo7452-destination-service  
   provides:
   - name: srv-api
     properties:
@@ -21,7 +21,7 @@ modules:
     - '*node_modules*'
     - package-lock.json
 # ----------------------------------------------
-- name: cfdemoS0020227452-approuter
+- name: cfdemo7452-approuter
 # ----------------------------------------------
   type: approuter.nodejs
   path: app
@@ -31,7 +31,7 @@ modules:
         url: ${default-url}
         application: ${app-name}
   properties:
-    TENANT_HOST_PATTERN: '^(.*)-${space}-cfdemoS0020227452-approuter.${default-domain}'
+    TENANT_HOST_PATTERN: '^(.*)-${space}-cfdemo7452-approuter.${default-domain}'
   requires:
   - name: srv-api
     group: destinations
@@ -40,10 +40,10 @@ modules:
       url: ~{url}
       forwardAuthToken: true
       timeout: 55000      
-  - name: cfdemoS0020227452-xsuaa
-  - name: cfdemoS0020227452-destination-service
-  - name: cfdemoS0020227452-repo-rt
-  - name: cfdemoS0020227452-registry
+  - name: cfdemo7452-xsuaa
+  - name: cfdemo7452-destination-service
+  - name: cfdemo7452-repo-rt
+  - name: cfdemo7452-registry
     group: destinations
     properties:
       forwardAuthToken: false
@@ -60,12 +60,12 @@ modules:
     - '*node_modules*'
     - package-lock.json
 # ----------------------------------------------
-- name: cfdemoS0020227452-app-content
+- name: cfdemo7452-app-content
 # ----------------------------------------------
   type: com.sap.application.content
   path: .
   requires:
-  - name: cfdemoS0020227452-repo-host
+  - name: cfdemo7452-repo-host
     parameters:
       content-target: true
   build-parameters:
@@ -87,54 +87,54 @@ modules:
     supported-platforms: []
 resources:
 # ----------------------------------------------
-- name: cfdemoS0020227452-xsuaa
+- name: cfdemo7452-xsuaa
 # ----------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     service: xsuaa
     service-plan: application   
     config:
-      xsappname: cfdemoS0020227452-${org}-${space} 
+      xsappname: cfdemo7452-${org}-${space} 
     path: ./xs-security.json   
   properties:
-    XSAPPNAME: cfdemoS0020227452-${org}-${space} 
+    XSAPPNAME: cfdemo7452-${org}-${space} 
 # ----------------------------------------------
-- name: cfdemoS0020227452-registry
+- name: cfdemo7452-registry
 # ----------------------------------------------
   type: org.cloudfoundry.managed-service
   requires:
-    - name: cfdemoS0020227452-xsuaa
+    - name: cfdemo7452-xsuaa
     - name: app_api
   parameters:
     service: saas-registry
     service-plan: application
-    service-name: cfdemoS0020227452-registry
+    service-name: cfdemo7452-registry
     config:
-      appName: cfdemoS0020227452-${org}-${space}
+      appName: cfdemo7452-${org}-${space}
       displayName: 'CF Demo MTA'
       description: 'Demo Application'
       category: 'XtendHR SaaS'
       appUrls:
         onSubscription: ~{app_api/url}/callback/v1.0/tenants/{tenantId}
         getDependencies: ~{app_api/url}/callback/v1.0/dependencies
-      xsappname: cfdemoS0020227452-${org}-${space}
+      xsappname: cfdemo7452-${org}-${space}
 # ----------------------------------------------     
-- name: cfdemoS0020227452-repo-rt
+- name: cfdemo7452-repo-rt
 # ----------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:    
     service-plan: app-runtime 
     service: html5-apps-repo      
 # ----------------------------------------------
-- name: cfdemoS0020227452-repo-host
+- name: cfdemo7452-repo-host
 # ----------------------------------------------
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
-    service-name: cfdemoS0020227452-html5-srv
+    service-name: cfdemo7452-html5-srv
     service-plan: app-host
 # ----------------------------------------------
-- name: cfdemoS0020227452-destination-service
+- name: cfdemo7452-destination-service
 # ----------------------------------------------
   type: org.cloudfoundry.managed-service
   requires:
@@ -162,7 +162,7 @@ resources:
                   URL: ~{srv-api/url}
                   HTML5.DynamicDestination: true
                   HTML5.ForwardAuthToken: true
-                - Name: cfdemoS0020227452-cfapi
+                - Name: cfdemo7452-cfapi
                   Description: CF cloud Controller API
                   URL: ${controller-url}
                   Type: HTTP
@@ -171,11 +171,11 @@ resources:
                   tokenServiceURL: ${authorization-url}/oauth/token
                   clientId: cf
                   clientSecret: 
-                  User: <setValueInCockpit>
-                  Password: <setValueInCockpit>
+                  User: <SetValueInCockpit>
+                  Password: <SetValueInCockpit>
       version: 1.0.0
     service: destination
-    service-name: cfdemoS0020227452-destination-service
+    service-name: cfdemo7452-destination-service
     service-plan: lite
 parameters:
   deploy_mode: html5-repo

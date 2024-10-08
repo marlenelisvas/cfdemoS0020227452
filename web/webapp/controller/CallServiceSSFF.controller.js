@@ -34,7 +34,7 @@ function (Controller, MessageToast, MessageBox,  Dialog, mobileLibrary, Button, 
             this._path1= "/srv/destinations?destinationX=" ;
             this._path2= "/srv/add?destinationX=" ;*/
             
-
+            this._destination ="sfodatatech";
 
             var newObj={
                 cust_ShirtSize: "",
@@ -80,7 +80,9 @@ function (Controller, MessageToast, MessageBox,  Dialog, mobileLibrary, Button, 
             this.initialData();
         },
         initialData:function(){
-            var url = "/srv/all?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452?$format=json";
+            var url = "/srv/all?destinationX="+this._destination+"&path=odata/v2/cust_CompanyShirts_S0020227452?$format=json";
+            //var url = "/srv/all?destinationX=s"+this._destination+"&path=cust_CompanyShirts_S0020227452?$format=json";
+           //  var url = "/srv/all";
             this.onCallSRV(url, "GET", "application/json", true, "odata", this);
         },
         _onCallSRV_: function(_url, type, cont, obj, enableAsync){     
@@ -249,7 +251,7 @@ function (Controller, MessageToast, MessageBox,  Dialog, mobileLibrary, Button, 
 			this.oDialog.close();
 		},
         submit: function(){
-            var url = "/srv/add?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452?$format=json"
+            var url = "/srv/add?destinationX=sfodataapi&path=odata/v2/cust_CompanyShirts_S0020227452?$format=json"
             var obj = this.getView().getModel("newShirt").getData();
             this._onCallSRV_(url, "POST", "application/json", obj, true);
             this._closeDialog();

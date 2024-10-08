@@ -29,9 +29,11 @@ var DialogType = mobileLibrary.DialogType;
 			var model= new JSONModel(oModel);
 			this.getView().setModel(model);
 			oRouter.getRoute("Details").attachMatched(this._onRouteMatched, this);			
+			this._destination ="sfodataapi";
 		},
 		initialData:function(externalCode){
-			var url = "/srv/destinations?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452?$filter=externalCode eq '" + externalCode +"'&$format=json"
+			var url = "/srv/destinations?destinationX="+ this._destination+"&path=odata/v2/cust_CompanyShirts_S0020227452?$filter=externalCode eq '" + externalCode +"'&$format=json"
+		
 			this.onCallSRV(url, "GET","application/json",  true, "shirt", this)
 		},
 		cleardata:function(){
@@ -80,7 +82,7 @@ var DialogType = mobileLibrary.DialogType;
 			var oData = this.getView().getModel("shirt").getData();
          
             var metadata = this.generate_Metadata(oData);
-            var url = "/srv/edit?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452/upsert";     
+            var url = "/srv/edit?destinationX="+ this._destination+"&path=odata/v2/cust_CompanyShirts_S0020227452/upsert";     
             this._onCallSRV_(url, "POST", "application/json", metadata);
 
 
@@ -130,7 +132,7 @@ var DialogType = mobileLibrary.DialogType;
 			var extCode= this.getView().getModel("shirt").getData().externalCode;
            // var obj = this.getExternaCode(oEvent);  
              //cust_CompanyShirts_S0020227452(529518L)
-            var url = "/srv/delete?destinationX=sfdemo&path=cust_CompanyShirts_S0020227452("+ extCode +"L)";           
+            var url = "/srv/delete?destinationX="+ this._destination+"&path=odata/v2/cust_CompanyShirts_S0020227452("+ extCode +"L)";           
             
             var self = this;
             if (!this.oApproveDialog) {
