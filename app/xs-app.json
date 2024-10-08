@@ -3,10 +3,10 @@
   "routes": [
     {
       "source": "^/srv/(.*)$",      
-      "destination": "srv-api",
+      "destination": "srv",
       "csrfProtection": false,
-      "target": "$1",
-      "httpMethods": ["GET", "POST", "DELETE"]
+      "authenticationType": "xsuaa",
+      "target": "$1"
     },
     {
       "source": "^(.*)$",
